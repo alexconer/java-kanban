@@ -1,24 +1,20 @@
-package com.shishkin.tasktracker;
-
-import com.shishkin.tasktracker.enums.TaskStates;
+package com.shishkin.tasktracker.model;
 
 public class Subtask extends Task{
-    private int epicId; // идентификатор эпика
+    private final int epicId; // идентификатор эпика
 
-    public Subtask(String name, String description) {
+    public Subtask(int epicId, String name, String description) {
         super(name, description);
+        this.epicId = epicId;
     }
 
-    public Subtask(int id, String name, String description, TaskStates state) {
+    public Subtask(int id, int epicId, String name, String description, TaskStates state) {
         super(id, name, description, state);
+        this.epicId = epicId;
     }
 
     public int getEpicId() {
         return epicId;
-    }
-
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
     }
 
     @Override

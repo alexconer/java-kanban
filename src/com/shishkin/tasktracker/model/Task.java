@@ -1,6 +1,4 @@
-package com.shishkin.tasktracker;
-
-import com.shishkin.tasktracker.enums.TaskStates;
+package com.shishkin.tasktracker.model;
 
 public class Task {
     private int id; // идентификатор задачи
@@ -30,21 +28,28 @@ public class Task {
         this.id = id;
     }
 
-    // getters для наименования и описания задачи (setters не требуются, т.к. параметрны задаются через конструктор)
+    // getters и setters для наименования и описания задачи
     public String getName() {
         return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public TaskStates getState() {
         return state;
     }
 
-    // setters для статуса задачи (доступен только наследникам класса, изменить статус можно только перевозданием класса)
-    protected void setState(TaskStates state) {
+    // setters для статуса задачи
+    public void setState(TaskStates state) {
         this.state = state;
     }
 

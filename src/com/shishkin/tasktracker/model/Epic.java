@@ -1,12 +1,10 @@
-package com.shishkin.tasktracker;
-
-import com.shishkin.tasktracker.enums.TaskStates;
+package com.shishkin.tasktracker.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Epic extends Task{
-    ArrayList<Integer> subtasks =  new ArrayList<>(); // список подзадач
+    private final ArrayList<Integer> subtasks =  new ArrayList<>(); // список подзадач
 
     public Epic(String name, String description) {
         super(name, description);
@@ -15,11 +13,6 @@ public class Epic extends Task{
     public Epic(int id, String name, String description) {
         super(name, description);
         setId(id);
-    }
-
-    // присваивает список подзадач
-    public void setSubtasks(ArrayList<Integer> subtasks) {
-        this.subtasks = subtasks;
     }
 
     // добавление подзадач
@@ -40,11 +33,6 @@ public class Epic extends Task{
     // получение списка идентификаторов подзадач
     public ArrayList<Integer> getSubtasksIds() {
         return subtasks;
-    }
-
-    @Override // присваивает вычисленный статус эпику
-    public void setState(TaskStates state) {
-        super.setState(state);
     }
 
     @Override

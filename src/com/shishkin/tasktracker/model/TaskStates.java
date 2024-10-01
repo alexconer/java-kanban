@@ -1,4 +1,4 @@
-package com.shishkin.tasktracker.enums;
+package com.shishkin.tasktracker.model;
 
 public enum TaskStates {
     NEW, // новая задача
