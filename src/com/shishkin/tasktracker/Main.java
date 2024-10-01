@@ -90,6 +90,10 @@ public class Main {
         System.out.println("---> Все подзадачи");
         printSubtasks(taskManager);
 
+        System.out.println("---> Удаляем все подзадачи");
+        taskManager.deleteAllSubtasks();
+        printEpics(taskManager);
+
     }
 
     private static void printTasks(TaskManager taskManager) {

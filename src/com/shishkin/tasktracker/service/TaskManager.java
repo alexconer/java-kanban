@@ -120,10 +120,9 @@ public class TaskManager {
     // удаление подзадачи эпика по id
     public void deleteSubtaskById(int subtaskId) {
         // удаляем подзадачу из эпика
-        Subtask subtask = getSubtaskById(subtaskId);
-        Epic epic = getEpicById(subtask.getEpicId());
+        final Subtask subtask = subtasks.remove(subtaskId);
+        final Epic epic = epics.get(subtask.getEpicId());
 
-        subtasks.remove(subtaskId);
         epic.removeSubtask(subtaskId);
         // обновляем статус эпика
         updateEpicState(epic);
@@ -145,6 +144,8 @@ public class TaskManager {
         // удаляем подзадачи из эпика
         for (Epic epic : epics.values()) {
             epic.removeAllSubtasks();
+            // обновляем статус эпика
+            updateEpicState(epic);
         }
 
         subtasks.clear();
@@ -156,7 +157,7 @@ public class TaskManager {
         boolean allSubtasksDone = true;
         boolean allSubtasksNew = true;
         for (Integer subtaskId : epic.getSubtasksIds()) {
-            Subtask subtask = getSubtaskById(subtaskId);
+            Subtask subtask = subtasks.get(subtaskId);
             if (subtask.getState() != TaskStates.NEW) {
                 allSubtasksNew = false;
             }
@@ -168,10 +169,10 @@ public class TaskManager {
             }
         }
 
-        if (allSubtasksDone) {
-            epic.setState(TaskStates.DONE);
-        } else if (allSubtasksNew) {
+        if (allSubtasksNew) {
             epic.setState(TaskStates.NEW);
+        } else if (allSubtasksDone) {
+            epic.setState(TaskStates.DONE);
         } else {
             epic.setState(TaskStates.IN_PROGRESS);
         }
