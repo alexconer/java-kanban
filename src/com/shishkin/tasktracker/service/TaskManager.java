@@ -5,6 +5,7 @@ import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     /**
@@ -101,4 +102,9 @@ public interface TaskManager {
      * удаление всех подзадач
      */
     void deleteAllSubtasks();
+
+    /**
+     * возвращает историю задач
+     */
+    List<Task> getHistory();
 }

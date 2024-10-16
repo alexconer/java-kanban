@@ -7,11 +7,15 @@ import com.shishkin.tasktracker.model.TaskStates;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager{
+    private final int MAX_HISTORY_SIZE = 10;
+
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, Epic> epics;
     private final HashMap<Integer, Subtask> subtasks;
+    private final List<Task> history;
 
     private int nextId = 1;
 
@@ -19,6 +23,7 @@ public class InMemoryTaskManager implements TaskManager{
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
+        history = new ArrayList<>(MAX_HISTORY_SIZE);
     }
 
     @Override
@@ -71,17 +76,30 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public Task getTaskById(int taskId) {
-        return tasks.get(taskId);
+        Task task = tasks.get(taskId);
+        if (task != null) {
+            addHistory(task);
+        }
+
+        return task;
     }
 
     @Override
     public Epic getEpicById(int epicId) {
-        return epics.get(epicId);
+        Epic epic = epics.get(epicId);
+        if (epic != null) {
+            addHistory(epic);
+        }
+        return epic;
     }
 
     @Override
     public Subtask getSubtaskById(int subtaskId) {
-        return subtasks.get(subtaskId);
+        Subtask subtask = subtasks.get(subtaskId);
+        if (subtask != null) {
+            addHistory(subtask);
+        }
+        return subtask;
     }
 
     @Override
@@ -151,6 +169,11 @@ public class InMemoryTaskManager implements TaskManager{
         subtasks.clear();
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return history;
+    }
+
     // пересчет статуса эпика
     private void updateEpicState(Epic epic) {
 
@@ -176,6 +199,14 @@ public class InMemoryTaskManager implements TaskManager{
         } else {
             epic.setState(TaskStates.IN_PROGRESS);
         }
+    }
+
+    // добавляет в историю
+    private void addHistory(Task task) {
+        if (history.size() == MAX_HISTORY_SIZE) {
+            history.remove(0);
+        }
+        history.add(task);
     }
 
 }
