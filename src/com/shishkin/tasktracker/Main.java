@@ -5,6 +5,7 @@ import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
 import com.shishkin.tasktracker.service.InMemoryTaskManager;
+import com.shishkin.tasktracker.service.Managers;
 import com.shishkin.tasktracker.service.TaskManager;
 
 public class Main {
@@ -13,7 +14,7 @@ public class Main {
         System.out.println("Поехали!");
 
         // создаем менеджер задач
-        TaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         System.out.println("---> Добавляем задачи");
         Task task1 = new Task("Задача 1", "Описание задачи 1");

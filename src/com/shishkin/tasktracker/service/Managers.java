@@ -1,0 +1,8 @@
+package com.shishkin.tasktracker.service;
+
+public class Managers {
+
+    public static TaskManager getDefault() {
+        return new InMemoryTaskManager();
+    }
+}
