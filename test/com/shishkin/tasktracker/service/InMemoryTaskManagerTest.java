@@ -10,13 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryTaskManagerTest {
 
     @Test
-    void managersClassReturnDefault() {
-        TaskManager taskManager = Managers.getDefault();
-        assertNotNull(taskManager);
-        assertInstanceOf(InMemoryTaskManager.class, taskManager);
-    }
-
-    @Test
     void addDifferentTask() {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addTask(new Task("Задача 1", "Описание задачи 1"));
@@ -37,5 +30,24 @@ class InMemoryTaskManagerTest {
         assertEquals(2, taskManager.getAllTasks().size());
         assertEquals(1, taskManager.getAllEpics().size());
         assertEquals(3, taskManager.getAllSubtasks().size());
+    }
+
+    @Test
+    void addTaskInHistory() {
+        TaskManager taskManager = Managers.getDefault();
+        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        taskManager.addTask(task1);
+        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        taskManager.addTask(task2);
+
+        // получаем задачу 2 по id
+        taskManager.getTaskById(task2.getId());
+        assertEquals(1, taskManager.getHistory().size());
+        assertEquals(task2.getId(), taskManager.getHistory().get(0).getId());
+
+        // получаем задачу 1 по id
+        taskManager.getTaskById(task1.getId());
+        assertEquals(2, taskManager.getHistory().size());
+        assertEquals(task1.getId(), taskManager.getHistory().get(1).getId());
     }
 }

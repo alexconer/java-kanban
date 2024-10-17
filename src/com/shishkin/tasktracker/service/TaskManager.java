@@ -4,7 +4,6 @@ import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -26,22 +25,22 @@ public interface TaskManager {
     /**
      * получение всех задач
      */
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     /**
      * получение всех эпиков
      */
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     /**
      * получение всех подзадач
      */
-    ArrayList<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
     /**
      * получение всех подзадач эпика
      */
-    ArrayList<Subtask> getSubtasks(int epicId);
+    List<Subtask> getSubtasks(int epicId);
 
     /**
      * получение задачи по id

@@ -8,12 +8,13 @@ import com.shishkin.tasktracker.model.TaskStates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager{
 
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Epic> epics;
-    private final HashMap<Integer, Subtask> subtasks;
+    private final Map<Integer, Task> tasks;
+    private final Map<Integer, Epic> epics;
+    private final Map<Integer, Subtask> subtasks;
 
     private final HistoryManager historyManager;
 
@@ -23,7 +24,7 @@ public class InMemoryTaskManager implements TaskManager{
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
-        historyManager = new InMemoryHistoryManager(10);
+        historyManager = Managers.getDefaultHistory();
     }
 
     @Override
@@ -49,25 +50,25 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
 
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public List<Epic> getAllEpics() {
         return new ArrayList<>(epics.values());
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks() {
+    public List<Subtask> getAllSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 
     @Override
-    public ArrayList<Subtask> getSubtasks(int epicId) {
+    public List<Subtask> getSubtasks(int epicId) {
         Epic epic = epics.get(epicId);
 
-        ArrayList<Subtask> allSubtasks = new ArrayList<>();
+        List<Subtask> allSubtasks = new ArrayList<>();
         for (Integer subtaskId : epic.getSubtasksIds()) {
             allSubtasks.add(subtasks.get(subtaskId));
         }
