@@ -2,9 +2,10 @@ package com.shishkin.tasktracker.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Epic extends Task{
-    private final ArrayList<Integer> subtasks =  new ArrayList<>(); // список подзадач
+    private final List<Integer> subtasks =  new ArrayList<>(); // список подзадач
 
     public Epic(String name, String description) {
         super(name, description);
@@ -31,7 +32,7 @@ public class Epic extends Task{
     }
 
     // получение списка идентификаторов подзадач
-    public ArrayList<Integer> getSubtasksIds() {
+    public List<Integer> getSubtasksIds() {
         return subtasks;
     }
 
