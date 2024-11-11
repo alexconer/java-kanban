@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
 
     private final Map<Integer, Task> tasks;
     private final Map<Integer, Epic> epics;
@@ -203,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager{
             if (subtask.getState() != TaskStates.DONE) {
                 allSubtasksDone = false;
             }
-            if (!allSubtasksDone && !allSubtasksNew){
+            if (!allSubtasksDone && !allSubtasksNew) {
                 break;
             }
         }

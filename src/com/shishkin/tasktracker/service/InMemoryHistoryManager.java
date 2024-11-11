@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Objects;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
     private final Map<Integer, Node> history;
     private Node head;
@@ -57,7 +57,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         return historyList;
     }
 
-    private void linkLast(Task task){
+    private void linkLast(Task task) {
         Node node = new Node(task, tail,null);
         if (head == null) {
             head = node;
@@ -70,7 +70,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         history.put(task.getId(), node);
     }
 
-    private void removeNode(Node node){
+    private void removeNode(Node node) {
         if (node == null) {
             return;
         }
@@ -87,7 +87,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         }
     }
 
-    private static class Node{
+    private static class Node {
         private Task task;
         private Node prev;
         private Node next;
