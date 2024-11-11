@@ -39,7 +39,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(Collection<? extends Task> elements) {
-        for (Task el : elements){
+        for (Task el : elements) {
             remove(el.getId());
         }
     }

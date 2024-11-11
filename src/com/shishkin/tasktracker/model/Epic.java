@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Epic extends Task{
+public class Epic extends Task {
     private final List<Integer> subtasks =  new ArrayList<>(); // список подзадач
 
     public Epic(String name, String description) {
@@ -17,12 +17,12 @@ public class Epic extends Task{
     }
 
     // добавление подзадач
-    public void addSubtask(int id){
+    public void addSubtask(int id) {
         subtasks.add(id);
     }
 
     // удаление подзадачи
-    public void removeSubtask(int id){
+    public void removeSubtask(int id) {
         subtasks.remove(Integer.valueOf(id));
     }
 
