@@ -3,7 +3,7 @@ package com.shishkin.tasktracker.service;
 import com.shishkin.tasktracker.model.Task;
 
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -11,13 +11,9 @@ import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final Map<Integer, Node> history;
+    private final Map<Integer, Node> history = new HashMap<>();
     private Node head;
     private Node tail;
-
-    public InMemoryHistoryManager() {
-        history = new HashMap<>();
-    }
 
     @Override
     public void add(Task task) {
@@ -29,10 +25,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        // получаем связь
-        Node node = history.get(id);
         // удаляем ноду
-        removeNode(node);
+        removeNode(history.get(id));
         // удаляем связь
         history.remove(id);
     }
@@ -46,7 +40,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        List<Task> historyList = new ArrayList<>();
+        List<Task> historyList = new LinkedList<>();
 
         Node node = head;
         while (node != null) {
@@ -74,16 +68,19 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node == null) {
             return;
         }
-        if (node.prev != null) {
-            node.prev.next = node.next;
+        Node prev = node.prev;
+        Node next = node.next;
+
+        if (prev != null) {
+            prev.next = next;
         } else {
-            head = node.next;
+            head = next;
         }
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
+        if (next != null) {
+            next.prev = prev;
         } else {
-            tail = node.prev;
+            tail = prev;
         }
     }
 
