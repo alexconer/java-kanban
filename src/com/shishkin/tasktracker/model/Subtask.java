@@ -1,6 +1,6 @@
 package com.shishkin.tasktracker.model;
 
-public class Subtask extends Task{
+public class Subtask extends Task {
     private final int epicId; // идентификатор эпика
 
     public Subtask(int epicId, String name, String description) {

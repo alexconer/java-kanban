@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
 
     private final Map<Integer, Task> tasks;
     private final Map<Integer, Epic> epics;
@@ -125,6 +125,8 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteTaskById(int taskId) {
         tasks.remove(taskId);
+        // удаляем из истории
+        historyManager.remove(taskId);
     }
 
     @Override
@@ -133,7 +135,11 @@ public class InMemoryTaskManager implements TaskManager{
         final Epic epic = epics.remove(epicId);
         for (Integer subtaskId : epic.getSubtasksIds()) {
             subtasks.remove(subtaskId);
+            // удаляем из истории подзадачи
+            historyManager.remove(subtaskId);
         }
+        // удаляем из истории эпик
+        historyManager.remove(epicId);
     }
 
     @Override
@@ -143,6 +149,8 @@ public class InMemoryTaskManager implements TaskManager{
         final Epic epic = epics.get(subtask.getEpicId());
 
         epic.removeSubtask(subtaskId);
+        // удаляем из истории подзадачи
+        historyManager.remove(subtaskId);
         // обновляем статус эпика
         updateEpicState(epic);
     }
@@ -150,12 +158,17 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteAllTasks() {
         tasks.clear();
+        // удаляем из истории
+        historyManager.remove(tasks.values());
     }
 
     @Override
     public void deleteAllEpics() {
         epics.clear();
         subtasks.clear();
+        // удаляем из истории
+        historyManager.remove(epics.values());
+        historyManager.remove(subtasks.values());
     }
 
     @Override
@@ -168,6 +181,8 @@ public class InMemoryTaskManager implements TaskManager{
         }
 
         subtasks.clear();
+        // удаляем из истории
+        historyManager.remove(subtasks.values());
     }
 
     @Override
@@ -188,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager{
             if (subtask.getState() != TaskStates.DONE) {
                 allSubtasksDone = false;
             }
-            if (!allSubtasksDone && !allSubtasksNew){
+            if (!allSubtasksDone && !allSubtasksNew) {
                 break;
             }
         }
