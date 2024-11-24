@@ -54,6 +54,11 @@ public class Task {
         this.state = state;
     }
 
+    // возвращает тип задачи
+    public TaskTypes getType() {
+        return TaskTypes.TASK;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
