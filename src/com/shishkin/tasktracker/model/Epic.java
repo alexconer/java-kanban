@@ -37,6 +37,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public TaskTypes getType() {
+        return TaskTypes.EPIC;
+    }
+
+    @Override
     public String toString() {
         return "Epic{" +
                 "id=" + getId() +

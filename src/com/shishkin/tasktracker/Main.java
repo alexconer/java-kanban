@@ -4,16 +4,20 @@ import com.shishkin.tasktracker.model.TaskStates;
 import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
-import com.shishkin.tasktracker.service.Managers;
+import com.shishkin.tasktracker.service.FileBackedTaskManager;
 import com.shishkin.tasktracker.service.TaskManager;
+
+import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
+        File file = new File("./resources/tasks.csv");
+
         // создаем менеджер задач
-        TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = new FileBackedTaskManager(file);
 
         System.out.println("---> Добавляем задачи");
         Task task1 = new Task("Задача 1", "Описание задачи 1");
@@ -99,25 +103,6 @@ public class Main {
         System.out.println("---> Добавляем подзадачу 13");
         Subtask subtask13 = new Subtask(epic1.getId(),"Подзадача 13", "Описание подзадачи 13");
         taskManager.addSubtask(subtask13);
-        printEpics(taskManager);
-
-        System.out.println("---> Удаляем подзадачу 13");
-        taskManager.deleteSubtaskById(subtask13.getId());
-        printEpics(taskManager);
-
-        System.out.println("---> Удаляем эпик 2");
-        taskManager.deleteEpicById(epic2.getId());
-        printEpics(taskManager);
-
-        System.out.println("---> Удаляем задачу 1");
-        taskManager.deleteTaskById(task1.getId());
-        printTasks(taskManager);
-
-        System.out.println("---> Все подзадачи");
-        printSubtasks(taskManager);
-
-        System.out.println("---> Удаляем все подзадачи");
-        taskManager.deleteAllSubtasks();
         printEpics(taskManager);
 
     }
