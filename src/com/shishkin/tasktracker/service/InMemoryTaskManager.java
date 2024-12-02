@@ -5,10 +5,10 @@ import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
 import com.shishkin.tasktracker.model.TaskStates;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -46,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         Epic epic = epics.get(subtask.getEpicId());
         epic.addSubtask(subtask.getId());
-        updateEpicState(epic);
+        updateEpicCondition(epic);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
         // обновляем статус эпика
-        updateEpicState(epics.get(subtask.getEpicId()));
+        updateEpicCondition(epics.get(subtask.getEpicId()));
     }
 
     @Override
@@ -152,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
         // удаляем из истории подзадачи
         historyManager.remove(subtaskId);
         // обновляем статус эпика
-        updateEpicState(epic);
+        updateEpicCondition(epic);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic epic : epics.values()) {
             epic.removeAllSubtasks();
             // обновляем статус эпика
-            updateEpicState(epic);
+            updateEpicCondition(epic);
         }
 
         subtasks.clear();
@@ -190,30 +190,44 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    // пересчет статуса эпика
-    private void updateEpicState(Epic epic) {
+    // пересчет статуса эпика и его продолжительности
+    private void updateEpicCondition(Epic epic) {
+        // обновляем статус эпика
+        Set<TaskStates> states = epic.getSubtasksIds()
+                .stream()
+                .map(subtaskId -> subtasks.get(subtaskId).getState())
+                .collect(Collectors.toSet());
 
-        boolean allSubtasksDone = true;
-        boolean allSubtasksNew = true;
-        for (Integer subtaskId : epic.getSubtasksIds()) {
-            Subtask subtask = subtasks.get(subtaskId);
-            if (subtask.getState() != TaskStates.NEW) {
-                allSubtasksNew = false;
-            }
-            if (subtask.getState() != TaskStates.DONE) {
-                allSubtasksDone = false;
-            }
-            if (!allSubtasksDone && !allSubtasksNew) {
-                break;
-            }
-        }
-
-        if (allSubtasksNew) {
-            epic.setState(TaskStates.NEW);
-        } else if (allSubtasksDone) {
-            epic.setState(TaskStates.DONE);
+        if (states.size() == 1 && states.contains(TaskStates.DONE)) {
+            epic.setState(TaskStates.DONE);// если все подзадачи выполнены, то статус эпика DONE
+        } else if (states.isEmpty() || (states.size() == 1 && states.contains(TaskStates.NEW))) {
+            epic.setState(TaskStates.NEW); // если все подзадачи новые, то статус эпика NEW
         } else {
             epic.setState(TaskStates.IN_PROGRESS);
+        }
+
+        // обновляем продолжительность эпика
+        LocalDateTime startTime = epic.getSubtasksIds()
+                .stream()
+                .map(subtaskId -> subtasks.get(subtaskId).getStartTime())
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo).orElse(null);
+
+        LocalDateTime endTime = epic.getSubtasksIds()
+                .stream()
+                .map(subtaskId -> subtasks.get(subtaskId).getEndTime())
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo).orElse(null);
+
+        Duration duration = epic.getSubtasksIds()
+                .stream()
+                .map(subtaskId -> subtasks.get(subtaskId).getDuration())
+                .filter(Objects::nonNull)
+                .reduce(Duration::plus).orElse(null);
+
+        if (startTime != null) {
+            epic.setStartTimeAndDuration(startTime, duration);
+            epic.setEndTime(endTime);
         }
     }
 }

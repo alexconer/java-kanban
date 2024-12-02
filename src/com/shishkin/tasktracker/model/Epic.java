@@ -1,11 +1,13 @@
 package com.shishkin.tasktracker.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Epic extends Task {
     private final List<Integer> subtasks =  new ArrayList<>(); // список подзадач
+    private LocalDateTime endTime; // дата и время завершения всех задач
 
     public Epic(String name, String description) {
         super(name, description);
@@ -36,9 +38,19 @@ public class Epic extends Task {
         return subtasks;
     }
 
+    // сохраняет дату и время завершения эпика
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public TaskTypes getType() {
         return TaskTypes.EPIC;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override
