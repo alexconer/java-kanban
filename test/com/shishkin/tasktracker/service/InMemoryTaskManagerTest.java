@@ -6,6 +6,9 @@ import com.shishkin.tasktracker.model.Task;
 import com.shishkin.tasktracker.model.TaskStates;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
@@ -14,15 +17,15 @@ class InMemoryTaskManagerTest {
     void addDifferentTask() {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addTask(new Task("Задача 1", "Описание задачи 1"));
-        taskManager.addTask(new Task("Задача 2", "Описание задачи 2"));
+        taskManager.addTask(new Task("Задача 2", "Описание задачи 2", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1)));
 
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
 
         taskManager.addEpic(epic1);
 
         Subtask subtask11 = new Subtask(epic1.getId(),"Подзадача 11", "Описание подзадачи 11");
-        Subtask subtask12 = new Subtask(epic1.getId(),"Подзадача 12", "Описание подзадачи 12");
-        Subtask subtask13 = new Subtask(epic1.getId(),"Подзадача 13", "Описание подзадачи 13");
+        Subtask subtask12 = new Subtask(epic1.getId(),"Подзадача 12", "Описание подзадачи 12", LocalDateTime.of(2024,12,1,22,0), Duration.ofDays(1));
+        Subtask subtask13 = new Subtask(epic1.getId(),"Подзадача 13", "Описание подзадачи 13", LocalDateTime.of(2024,12,2,22,0), Duration.ofDays(1));
 
         taskManager.addSubtask(subtask11);
         taskManager.addSubtask(subtask12);
@@ -31,6 +34,7 @@ class InMemoryTaskManagerTest {
         assertEquals(2, taskManager.getAllTasks().size());
         assertEquals(1, taskManager.getAllEpics().size());
         assertEquals(3, taskManager.getAllSubtasks().size());
+        assertEquals(3, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -55,14 +59,18 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteTask() {
         TaskManager taskManager = Managers.getDefault();
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
         taskManager.addTask(task1);
         Task task2 = new Task("Задача 2", "Описание задачи 2");
         taskManager.addTask(task2);
 
+        assertEquals(2, taskManager.getAllTasks().size());
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
+
         taskManager.deleteTaskById(task1.getId());
         assertEquals(1, taskManager.getAllTasks().size());
         assertEquals(task2.getId(), taskManager.getAllTasks().get(0).getId());
+        assertEquals(0, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -72,20 +80,22 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         taskManager.addEpic(epic1);
 
-        Subtask subtask11 = new Subtask(epic1.getId(),"Подзадача 11", "Описание подзадачи 11");
-        Subtask subtask12 = new Subtask(epic1.getId(),"Подзадача 12", "Описание подзадачи 12");
+        Subtask subtask11 = new Subtask(epic1.getId(),"Подзадача 11", "Описание подзадачи 11", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
+        Subtask subtask12 = new Subtask(epic1.getId(),"Подзадача 12", "Описание подзадачи 12", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
 
         taskManager.addSubtask(subtask11);
         taskManager.addSubtask(subtask12);
 
         assertEquals(2, taskManager.getAllSubtasks().size());
         assertEquals(2, epic1.getSubtasksIds().size());
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
 
         // удаляем подзадачу 11
         taskManager.deleteSubtaskById(subtask11.getId());
 
         assertEquals(1, taskManager.getAllSubtasks().size());
         assertEquals(1, epic1.getSubtasksIds().size());
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -95,8 +105,8 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         taskManager.addEpic(epic1);
 
-        Subtask subtask11 = new Subtask(epic1.getId(), "Подзадача 11", "Описание подзадачи 11");
-        Subtask subtask12 = new Subtask(epic1.getId(), "Подзадача 12", "Описание подзадачи 12");
+        Subtask subtask11 = new Subtask(epic1.getId(), "Подзадача 11", "Описание подзадачи 11", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
+        Subtask subtask12 = new Subtask(epic1.getId(), "Подзадача 12", "Описание подзадачи 12", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
 
         taskManager.addSubtask(subtask11);
         taskManager.addSubtask(subtask12);
@@ -109,6 +119,7 @@ class InMemoryTaskManagerTest {
 
         assertEquals(0, taskManager.getAllEpics().size());
         assertEquals(0, taskManager.getAllSubtasks().size());
+        assertEquals(0, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -142,5 +153,39 @@ class InMemoryTaskManagerTest {
         taskManager.deleteSubtaskById(subtask12.getId());
 
         assertEquals(TaskStates.NEW, epic1.getState());
+    }
+
+    @Test
+    void getPrioritizedTasks() {
+        TaskManager taskManager = Managers.getDefault();
+        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        taskManager.addTask(task1);
+        assertEquals(0, taskManager.getPrioritizedTasks().size());
+
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.of(2024,12,3,22,0), Duration.ofDays(1));
+        taskManager.addTask(task2);
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
+
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
+
+        taskManager.addEpic(epic1);
+
+        Subtask subtask11 = new Subtask(epic1.getId(),"Подзадача 11", "Описание подзадачи 11");
+        Subtask subtask12 = new Subtask(epic1.getId(),"Подзадача 12", "Описание подзадачи 12", LocalDateTime.of(2024,12,2,22,0), Duration.ofDays(1));
+        Subtask subtask13 = new Subtask(epic1.getId(),"Подзадача 13", "Описание подзадачи 13", LocalDateTime.of(2024,12,1,23,0), Duration.ofDays(1));
+        Subtask subtask14 = new Subtask(epic1.getId(),"Подзадача 14", "Описание подзадачи 14", LocalDateTime.of(2024,12,1,22,0), Duration.ofDays(1));
+
+        taskManager.addSubtask(subtask11);
+        taskManager.addSubtask(subtask12);
+        taskManager.addSubtask(subtask13);
+        taskManager.addSubtask(subtask14);
+
+        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(subtask14.getId(), taskManager.getPrioritizedTasks().get(0).getId());
+        assertEquals(subtask13.getId(), taskManager.getPrioritizedTasks().get(1).getId());
+        assertEquals(task2.getId(), taskManager.getPrioritizedTasks().getLast().getId());
+        if (epic1.getDuration().isPresent()){
+            assertEquals(4320, epic1.getDuration().get().toMinutes());
+        }
     }
 }

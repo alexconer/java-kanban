@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Epic extends Task {
     private final List<Integer> subtasks =  new ArrayList<>(); // список подзадач
@@ -49,8 +50,8 @@ public class Epic extends Task {
     }
 
     @Override
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public Optional<LocalDateTime> getEndTime() {
+        return Optional.ofNullable(endTime);
     }
 
     @Override

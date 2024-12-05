@@ -2,6 +2,7 @@ package com.shishkin.tasktracker.model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class Task {
     private int id; // идентификатор задачи
@@ -80,18 +81,17 @@ public class Task {
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public Optional<LocalDateTime> getStartTime() {
+        return Optional.ofNullable(startTime);
     }
 
-    public Duration getDuration() {
-        return duration;
+    public Optional<Duration> getDuration() {
+        return Optional.ofNullable(duration);
     }
 
     // возвращает дату и время завершения задачи
-    public LocalDateTime getEndTime() {
-        if (startTime == null) return null;
-        return startTime.plus(duration);
+    public Optional<LocalDateTime> getEndTime() {
+        return getStartTime().isPresent() ? Optional.of(startTime.plus(duration)) : Optional.empty();
     }
 
     @Override

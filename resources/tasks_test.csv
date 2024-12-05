@@ -1,8 +1,8 @@
-id,type,name,status,description,epic
-1,TASK,Task1,NEW,Desc1,
-2,TASK,Task2,NEW,Desc2,
-3,EPIC,Epic1,NEW,Desc1,
-4,EPIC,Epic2,NEW,Desc2,
-5,SUBTASK,Subtask1,NEW,Desc1,3
-6,SUBTASK,Subtask2,NEW,Desc2,3
-7,SUBTASK,Subtask2,NEW,Desc1,4
+id,type,name,status,description,epic,start_time,duration
+1,TASK,Task1,NEW,Desc1,,,
+2,TASK,Task2,NEW,Desc2,,2024-12-04T22:00:00,1440
+3,EPIC,Epic1,NEW,Desc1,,2024-12-02T22:00:00,2880
+4,EPIC,Epic2,NEW,Desc2,,,
+5,SUBTASK,Subtask1,NEW,Desc1,3,2024-12-02T22:00:00,1440
+6,SUBTASK,Subtask2,NEW,Desc2,3,2024-12-04T22:00:00,1440
+7,SUBTASK,Subtask2,NEW,Desc1,4,,
