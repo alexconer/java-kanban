@@ -91,11 +91,10 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Subtask> getSubtasks(int epicId) {
         Epic epic = epics.get(epicId);
 
-        List<Subtask> allSubtasks = new ArrayList<>();
-        for (Integer subtaskId : epic.getSubtasksIds()) {
-            allSubtasks.add(subtasks.get(subtaskId));
-        }
-        return allSubtasks;
+        return epic.getSubtasksIds()
+                .stream()
+                .map(subtasks::get)
+                .collect(Collectors.toList());
     }
 
     @Override
