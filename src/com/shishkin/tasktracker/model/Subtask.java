@@ -1,5 +1,8 @@
 package com.shishkin.tasktracker.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
     private final int epicId; // идентификатор эпика
 
@@ -8,8 +11,18 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(int epicId, String name, String description, LocalDateTime startTime, Duration duration) {
+        super(name, description, startTime, duration);
+        this.epicId = epicId;
+    }
+
     public Subtask(int id, int epicId, String name, String description, TaskStates state) {
         super(id, name, description, state);
+        this.epicId = epicId;
+    }
+
+    public Subtask(int id, int epicId, String name, String description, TaskStates state, LocalDateTime startTime, Duration duration) {
+        super(id, name, description, state, startTime, duration);
         this.epicId = epicId;
     }
 
