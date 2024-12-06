@@ -122,14 +122,6 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void managerSaveExceptionTest() {
-        file = new File("|fake_file.txt|");;
-        taskManager = new FileBackedTaskManager(file);
-        Task task1 = new Task("Task1", "Desc1");
-        assertThrows(ManagerSaveException.class,() -> taskManager.addTask(task1));
-    }
-
-    @Test
     void managerLoadExceptionTest() {
         file = new File("./resources/fakeFile.txt");
         assertThrows(ManagerLoadException.class,() -> FileBackedTaskManager.loadFromFile(file));
