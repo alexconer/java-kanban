@@ -48,7 +48,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         // проверяем пересечение и добавляем в отсортированный список
         if (task.getStartTime().isPresent()) {
-            if (hasIntersection(task)){
+            if (hasIntersection(task)) {
                 throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
             }
 
@@ -73,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         // проверяем пересечение и добавляем в отсортированный список
         if (subtask.getStartTime().isPresent()) {
-            if (hasIntersection(subtask)){
+            if (hasIntersection(subtask)) {
                 throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
             }
 
@@ -145,7 +145,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         // проверяем пересечение и обновляем в отсортированном списке
         if (task.getStartTime().isPresent()) {
-            if (hasIntersection(task)){
+            if (hasIntersection(task)) {
                 throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
             }
 
@@ -168,7 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         // проверяем пересечение и обновляем в отсортированном списке
         if (subtask.getStartTime().isPresent()) {
-            if (hasIntersection(subtask)){
+            if (hasIntersection(subtask)) {
                 throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
             }
 
