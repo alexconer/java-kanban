@@ -169,12 +169,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } else {
             builder.append(",");
         }
-        if (task.getStartTime().isPresent()){
+        if (task.getStartTime().isPresent()) {
             builder.append(task.getStartTime().get().format(DateTimeFormatter.ISO_DATE_TIME)).append(",");
         } else {
             builder.append(",");
         }
-        if (task.getDuration().isPresent()){
+        if (task.getDuration().isPresent()) {
             builder.append(task.getDuration().get().toMinutes());
         }
         return builder.toString();
