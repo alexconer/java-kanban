@@ -1,5 +1,6 @@
 package com.shishkin.tasktracker.service;
 
+import com.shishkin.tasktracker.exception.TaskIntersectionException;
 import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
@@ -45,8 +46,12 @@ public class InMemoryTaskManager implements TaskManager {
         task.setId(nextId++);
         tasks.put(task.getId(), task);
 
-        // добавляем в отсортированный список
+        // проверяем пересечение и добавляем в отсортированный список
         if (task.getStartTime().isPresent()) {
+            if (hasIntersection(task)){
+                throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
+            }
+
             sortedTasks.add(task);
         }
     }
@@ -66,8 +71,12 @@ public class InMemoryTaskManager implements TaskManager {
         epic.addSubtask(subtask.getId());
         updateEpicCondition(epic);
 
-        // добавляем в отсортированный список
+        // проверяем пересечение и добавляем в отсортированный список
         if (subtask.getStartTime().isPresent()) {
+            if (hasIntersection(subtask)){
+                throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
+            }
+
             sortedTasks.add(subtask);
         }
     }
@@ -134,8 +143,12 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         tasks.put(task.getId(), task);
 
-        // обновляем в отсортированном списке
+        // проверяем пересечение и обновляем в отсортированном списке
         if (task.getStartTime().isPresent()) {
+            if (hasIntersection(task)){
+                throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
+            }
+
             sortedTasks.add(task);
         }
     }
@@ -153,8 +166,12 @@ public class InMemoryTaskManager implements TaskManager {
         // обновляем статус эпика
         updateEpicCondition(epics.get(subtask.getEpicId()));
 
-        // обновляем в отсортированном списке
+        // проверяем пересечение и обновляем в отсортированном списке
         if (subtask.getStartTime().isPresent()) {
+            if (hasIntersection(subtask)){
+                throw new TaskIntersectionException("Задачи пересекаются по времени выполнения");
+            }
+
             sortedTasks.add(subtask);
         }
     }
@@ -299,5 +316,20 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStartTimeAndDuration(startTime.get(), duration.orElse(null));
             epic.setEndTime(endTime.orElse(null));
         }
+    }
+
+    /**
+     * Проверяет на пересечение времени выполнения задач
+     */
+    private boolean hasIntersection(Task task) {
+        if (task.getStartTime().isEmpty() || task.getEndTime().isEmpty()) {
+            return false;
+        }
+
+        return sortedTasks.stream()
+                .filter(t -> t.getStartTime().isPresent() && t.getEndTime().isPresent())
+                .filter(t -> t.getId() != task.getId()) // не проверяем задачу, если она уже в списке
+                .anyMatch(t -> (t.getStartTime().get().isAfter(task.getStartTime().get()) && t.getStartTime().get().isBefore(task.getEndTime().get())) // пересечение слева
+                        || (t.getEndTime().get().isAfter(task.getStartTime().get()) && t.getStartTime().get().isBefore(task.getEndTime().get()))); // пересечение справа
     }
 }

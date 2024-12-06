@@ -33,7 +33,7 @@ public class FileBackedTaskManagerTest {
     @Test
     void saveAllTasksToFileTest() throws IOException {
         Task task1 = new Task("Task1", "Desc1");
-        Task task2 = new Task("Task2", "Desc2", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
+        Task task2 = new Task("Task2", "Desc2", LocalDateTime.of(2024,12,1,22,0), Duration.ofDays(1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         Epic epic1 = new Epic("Epic1", "Desc1");
@@ -56,7 +56,7 @@ public class FileBackedTaskManagerTest {
         List<String> expectedLines = new ArrayList<>();
         expectedLines.add("id,type,name,status,description,epic,start_time,duration");
         expectedLines.add("1,TASK,Task1,NEW,Desc1,,,");
-        expectedLines.add("2,TASK,Task2,NEW,Desc2,,2024-12-04T22:00:00,1440");
+        expectedLines.add("2,TASK,Task2,NEW,Desc2,,2024-12-01T22:00:00,1440");
         expectedLines.add("3,EPIC,Epic1,NEW,Desc1,,2024-12-02T22:00:00,2880");
         expectedLines.add("4,EPIC,Epic2,NEW,Desc2,,,");
         expectedLines.add("5,SUBTASK,Subtask1,NEW,Desc1,3,2024-12-02T22:00:00,1440");
@@ -69,7 +69,7 @@ public class FileBackedTaskManagerTest {
     @Test
     void loadAllTasksFromFileTest() throws IOException {
         Task task1 = new Task("Task1", "Desc1");
-        Task task2 = new Task("Task2", "Desc2", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
+        Task task2 = new Task("Task2", "Desc2", LocalDateTime.of(2024,12,1,22,0), Duration.ofDays(1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         Epic epic1 = new Epic("Epic1", "Desc1");
