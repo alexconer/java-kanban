@@ -5,6 +5,7 @@ import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
 import com.shishkin.tasktracker.model.TaskStates;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -12,11 +13,16 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InMemoryTaskManagerTest {
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+
+    @Override
+    @BeforeEach
+    void setUp() {
+        taskManager = new InMemoryTaskManager();
+    }
 
     @Test
     void addDifferentTask() {
-        TaskManager taskManager = Managers.getDefault();
         taskManager.addTask(new Task("Задача 1", "Описание задачи 1"));
         taskManager.addTask(new Task("Задача 2", "Описание задачи 2", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1)));
 
@@ -40,7 +46,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addTaskInHistory() {
-        TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Задача 1", "Описание задачи 1");
         taskManager.addTask(task1);
         Task task2 = new Task("Задача 2", "Описание задачи 2");
@@ -59,7 +64,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteTask() {
-        TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.of(2024,12,4,22,0), Duration.ofDays(1));
         taskManager.addTask(task1);
         Task task2 = new Task("Задача 2", "Описание задачи 2");
@@ -76,8 +80,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteSubtask() {
-        TaskManager taskManager = Managers.getDefault();
-
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         taskManager.addEpic(epic1);
 
@@ -101,8 +103,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteEpic() {
-        TaskManager taskManager = Managers.getDefault();
-
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         taskManager.addEpic(epic1);
 
@@ -125,7 +125,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void changeEpicStatus() {
-        TaskManager taskManager = Managers.getDefault();
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         taskManager.addEpic(epic1);
 
@@ -158,7 +157,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void getPrioritizedTasks() {
-        TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Задача 1", "Описание задачи 1");
         taskManager.addTask(task1);
         assertEquals(0, taskManager.getPrioritizedTasks().size());
@@ -192,7 +190,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void intersectionTaskTest() {
-        TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.of(2024,12,4,22,0), Duration.ofHours(1));
         taskManager.addTask(task1);
 
@@ -217,6 +214,5 @@ class InMemoryTaskManagerTest {
         Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.of(2024,12,4,23,0), Duration.ofHours(1));
         assertDoesNotThrow(() -> taskManager.addTask(task3));
         assertEquals(3, taskManager.getPrioritizedTasks().size());
-
     }
 }

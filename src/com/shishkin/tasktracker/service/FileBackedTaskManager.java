@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
+    private final String FILE_HEADER = String.join(",", "id", "type", "name", "status", "description", "epic", "start_time", "duration");;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -95,8 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
      */
     private void save() {
         try (Writer writer = new FileWriter(file, StandardCharsets.UTF_8)) {
-            String header = String.join(",", "id", "type", "name", "status", "description", "epic", "start_time", "duration");
-            writer.write(header);
+            writer.write(FILE_HEADER);
             writer.write("\n");
 
             // сохраняем все задачи

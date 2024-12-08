@@ -1,7 +1,6 @@
 package com.shishkin.tasktracker.service;
 
 import com.shishkin.tasktracker.exception.ManagerLoadException;
-import com.shishkin.tasktracker.exception.ManagerSaveException;
 import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
 import com.shishkin.tasktracker.model.Task;
@@ -19,13 +18,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    private TaskManager taskManager;
     private File file;
 
+    @Override
     @BeforeEach
-    void beforeEach() throws IOException {
+    void setUp() {
         file = new File("./resources/tasks_test.csv");
         taskManager = new FileBackedTaskManager(file);
     }
@@ -114,8 +113,6 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void loadFromEmptyFileTest() throws IOException {
-        TaskManager newTaskManager = FileBackedTaskManager.loadFromFile(file);
-
         assertEquals(0, taskManager.getAllTasks().size());
         assertEquals(0, taskManager.getAllSubtasks().size());
         assertEquals(0, taskManager.getAllEpics().size());
