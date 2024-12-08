@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
-    private final String FILE_HEADER = String.join(",", "id", "type", "name", "status", "description", "epic", "start_time", "duration");;
+    private static final String FILE_HEADER = String.join(",", "id", "type", "name", "status", "description", "epic", "start_time", "duration");
 
     public FileBackedTaskManager(File file) {
         this.file = file;
