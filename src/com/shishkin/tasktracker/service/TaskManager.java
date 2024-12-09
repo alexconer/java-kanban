@@ -38,6 +38,11 @@ public interface TaskManager {
     List<Subtask> getAllSubtasks();
 
     /**
+     * получение списка задач в порядке приоритета
+     */
+    List<Task> getPrioritizedTasks();
+
+    /**
      * получение всех подзадач эпика
      */
     List<Subtask> getSubtasks(int epicId);
