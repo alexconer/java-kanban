@@ -1,5 +1,6 @@
 package com.shishkin.tasktracker.service;
 
+import com.shishkin.tasktracker.exception.NotFoundException;
 import com.shishkin.tasktracker.exception.TaskIntersectionException;
 import com.shishkin.tasktracker.model.Epic;
 import com.shishkin.tasktracker.model.Subtask;
@@ -114,10 +115,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int taskId) {
         Task task = tasks.get(taskId);
-        if (task != null) {
-            historyManager.add(task);
+        if (task == null) {
+            throw new NotFoundException("Задача не найдена");
         }
-
+        historyManager.add(task);
         return task;
     }
 
@@ -141,6 +142,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        Task oldTask = tasks.get(task.getId());
+        if (oldTask == null) {
+            throw new NotFoundException("Задача не найдена");
+        }
+
         tasks.put(task.getId(), task);
 
         // проверяем пересечение и обновляем в отсортированном списке
@@ -179,6 +185,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskById(int taskId) {
         final Task task = tasks.remove(taskId);
+        if (task == null) {
+            throw new NotFoundException("Задача не найдена");
+        }
+
         // удаляем из истории
         historyManager.remove(taskId);
 
