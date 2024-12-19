@@ -16,6 +16,8 @@ public class HttpTaskServer {
         server.createContext("/tasks", new TaskHandler(taskManager));
         server.createContext("/epics", new EpicHandler(taskManager));
         server.createContext("/subtasks", new SubtaskHandler(taskManager));
+        server.createContext("/history", new HistoryHandler(taskManager));
+        server.createContext("/prioritized", new PrioritizedTasksHandler(taskManager));
     }
 
     public void start() throws IOException {
