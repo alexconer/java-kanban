@@ -14,11 +14,12 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         server = HttpServer.create(new java.net.InetSocketAddress(8080), 0);
         server.createContext("/tasks", new TaskHandler(taskManager));
+        server.createContext("/epics", new EpicHandler(taskManager));
+        server.createContext("/subtasks", new SubtaskHandler(taskManager));
     }
 
     public void start() throws IOException {
         server.start();
-        System.out.println("HTTP-сервер запущен");
     }
 
     public void stop() {

@@ -57,7 +57,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
                 default -> throw new NotFoundException("Запрос не найден");
             };
 
-            // если есть тело ответа отправлояем его иначе просто статус
+            // если есть тело ответа отправляем его иначе просто статус
             if (respMessage != null && !respMessage.isEmpty()) {
                 byte[] resp = respMessage.getBytes();
                 exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
