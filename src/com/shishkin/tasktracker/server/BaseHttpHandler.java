@@ -52,7 +52,10 @@ public abstract class BaseHttpHandler implements HttpHandler {
             int statusCode = 200;
             String respMessage = switch (requestMethod) {
                 case "GET" -> get(path, requestMessage);
-                case "POST" -> {statusCode = 201; yield post(path, requestMessage);}
+                case "POST" -> {
+                    statusCode = 201;
+                    yield post(path, requestMessage);
+                }
                 case "DELETE" -> delete(path, requestMessage);
                 default -> throw new NotFoundException("Запрос не найден");
             };
