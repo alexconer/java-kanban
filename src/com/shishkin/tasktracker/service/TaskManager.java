@@ -37,6 +37,7 @@ public interface TaskManager {
      */
     List<Subtask> getAllSubtasks();
 
+
     /**
      * получение списка задач в порядке приоритета
      */
