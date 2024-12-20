@@ -51,12 +51,12 @@ public abstract class BaseHttpHandler implements HttpHandler {
         try (OutputStream responseBody = exchange.getResponseBody()) {
             int statusCode = 200;
             String respMessage = switch (requestMethod) {
-                case RequestMethods.GET-> get(path, requestMessage);
-                case RequestMethods.POST-> {
+                case RequestMethods.GET -> get(path, requestMessage);
+                case RequestMethods.POST -> {
                     statusCode = 201;
                     yield post(path, requestMessage);
                 }
-                case RequestMethods.DELETE-> delete(path, requestMessage);
+                case RequestMethods.DELETE -> delete(path, requestMessage);
                 default -> throw new NotFoundException("Запрос не найден");
             };
 
