@@ -11,14 +11,18 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String get(String[] path, String message) {
+    public String get(String path, String message) {
         try {
-            Object obj = switch (path.length) {
-                case 2 -> getTaskManager().getAllEpics();
-                case 3 -> getTaskManager().getEpicById(Integer.parseInt(path[2]));
-                case 4 -> getTaskManager().getSubtasks(Integer.parseInt(path[2]));
-                default -> throw new NotFoundException("Некорректный запрос");
-            };
+            Object obj;
+            if (path.matches("^/epics$")) {
+                obj = getTaskManager().getAllEpics();
+            } else if (path.matches("^/epics/\\d+$")) {
+                obj = getTaskManager().getEpicById(getId(path));
+            } else if (path.matches("^/epics/\\d+/subtasks$")) {
+                obj = getTaskManager().getSubtasks(getId(path));
+            } else {
+                throw new NotFoundException("Некорректный запрос");
+            }
             return toJson(obj);
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид эпика");
@@ -26,7 +30,7 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String post(String[] path, String message) {
+    public String post(String path, String message) {
         Epic epic = fromJson(message, Epic.class);
 
         if (epic.getId() == 0) {
@@ -38,9 +42,9 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String delete(String[] path, String message) {
+    public String delete(String path, String message) {
         try {
-            getTaskManager().deleteEpicById(Integer.parseInt(path[2]));
+            getTaskManager().deleteEpicById(getId(path));
             return null;
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид эпика");

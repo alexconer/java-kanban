@@ -54,6 +54,10 @@ public class SubtaskHandlerTest extends HttpHandlersTest {
     @Test
     public void testAddSubtask() throws IOException, InterruptedException {
 
+        // ошибочный запрос
+        HttpResponse<String> response = getResponse("POST", "/subtasks", "{\"foo\":\"bar\"}");
+        assertEquals(500, response.statusCode());
+
         List<Subtask> subtasksFromManager = manager.getAllSubtasks();
 
         assertEquals(2, subtasksFromManager.size());
@@ -94,8 +98,11 @@ public class SubtaskHandlerTest extends HttpHandlersTest {
         int id = subtasksFromManager.getFirst().getId();
         subtask11 = new Subtask(id, epicsFromManager.getFirst().getId(), "Подзадача 1 (update)", "Описание подзадачи 1", TaskStates.IN_PROGRESS);
         HttpResponse<String> response = getResponse("POST", "/subtasks", gson.toJson(subtask11));
-
         assertEquals(201, response.statusCode());
+
+        // ошибочный запрос
+        response = getResponse("POST", "/subtasks", "{\"foo\":\"bar\"}");
+        assertEquals(500, response.statusCode());
 
         subtasksFromManager = manager.getAllSubtasks();
 
@@ -135,7 +142,10 @@ public class SubtaskHandlerTest extends HttpHandlersTest {
 
         assertEquals(2, subtasksFromManager.size());
 
-        HttpResponse<String> response = getResponse("GET", "/subtasks", null);
+        HttpResponse<String> response = getResponse("GET", "/subtasks123", null);
+        assertEquals(404, response.statusCode());
+
+        response = getResponse("GET", "/subtasks", null);
         assertEquals(200, response.statusCode());
 
         JsonElement element = JsonParser.parseString(response.body());

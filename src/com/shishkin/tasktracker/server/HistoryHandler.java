@@ -10,17 +10,17 @@ public class HistoryHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String get(String[] path, String message) {
+    public String get(String path, String message) {
         return toJson(getTaskManager().getHistory());
     }
 
     @Override
-    public String post(String[] path, String message) {
+    public String post(String path, String message) {
         throw new NotFoundException("not implemented");
     }
 
     @Override
-    public String delete(String[] path, String message) {
+    public String delete(String path, String message) {
         throw new NotFoundException("not implemented");
     }
 }

@@ -34,6 +34,10 @@ public class EpicHandlerTest extends HttpHandlersTest {
         HttpResponse<String> response = getResponse("POST", "/epics", gson.toJson(epic1));
         assertEquals(201, response.statusCode());
 
+        // ошибочный запрос
+        response = getResponse("POST", "/epics", "{\"foo\":\"bar\"}");
+        assertEquals(500, response.statusCode());
+
         List<Epic> epicsFromManager = manager.getAllEpics();
         Epic loadedEpic = epicsFromManager.getFirst();
 
@@ -97,8 +101,12 @@ public class EpicHandlerTest extends HttpHandlersTest {
         int id = tasksFromManager.getFirst().getId();
         epic1 = new Epic(id, "Эпик 2", "Описание эпика 2");
         HttpResponse<String> response = getResponse("POST", "/epics", gson.toJson(epic1));
-
         assertEquals(201, response.statusCode());
+
+        // некорректный ид
+        epic1 = new Epic(999, "Эпик 2", "Описание эпика 2");
+        response = getResponse("POST", "/epics", gson.toJson(epic1));
+        assertEquals(404, response.statusCode());
 
         assertEquals(1, tasksFromManager.size());
         assertEquals(epic1.getName(), tasksFromManager.getFirst().getName());
@@ -116,6 +124,9 @@ public class EpicHandlerTest extends HttpHandlersTest {
         assertEquals(2, subtasksFromManager.size());
 
         HttpResponse<String> response = getResponse("DELETE", "/epics/99999", null);
+        assertEquals(404, response.statusCode());
+
+        response = getResponse("DELETE", "/epics/99999aaa", null);
         assertEquals(404, response.statusCode());
 
         response = getResponse("DELETE", "/epics/" + loadedEpic.getId(), null);
@@ -139,6 +150,9 @@ public class EpicHandlerTest extends HttpHandlersTest {
         List<Epic> tasksFromManager = manager.getAllEpics();
 
         assertEquals(2, tasksFromManager.size());
+
+        response = getResponse("GET", "/epics123", null);
+        assertEquals(404, response.statusCode());
 
         response = getResponse("GET", "/epics", null);
         assertEquals(200, response.statusCode());
@@ -168,4 +182,5 @@ public class EpicHandlerTest extends HttpHandlersTest {
         assertEquals(tasksFromManager.getLast().getDescription(), taskEl.getAsJsonObject().get("description").getAsString());
         assertEquals(TaskStates.NEW.toString(), taskEl.getAsJsonObject().get("state").getAsString());
     }
+
 }

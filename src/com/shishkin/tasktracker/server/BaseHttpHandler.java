@@ -45,18 +45,18 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
         String requestMessage = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
 
-        String[] path = exchange.getRequestURI().getPath().split("/");
-        String requestMethod = exchange.getRequestMethod();
+        String path = exchange.getRequestURI().getPath();
+        RequestMethods requestMethod = RequestMethods.valueOf(exchange.getRequestMethod());
 
         try (OutputStream responseBody = exchange.getResponseBody()) {
             int statusCode = 200;
             String respMessage = switch (requestMethod) {
-                case "GET" -> get(path, requestMessage);
-                case "POST" -> {
+                case RequestMethods.GET-> get(path, requestMessage);
+                case RequestMethods.POST-> {
                     statusCode = 201;
                     yield post(path, requestMessage);
                 }
-                case "DELETE" -> delete(path, requestMessage);
+                case RequestMethods.DELETE-> delete(path, requestMessage);
                 default -> throw new NotFoundException("Запрос не найден");
             };
 
@@ -74,7 +74,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
         } catch (TaskIntersectionException e) { // задача пересекается по времени исполнения
             exchange.sendResponseHeaders(406, 0);
             exchange.getResponseBody().write(e.getMessage().getBytes());
-        } catch (Exception e) { // ошибка сервера
+        } catch (Throwable e) { // ошибка сервера
             exchange.sendResponseHeaders(500, 0);
             exchange.getResponseBody().write(e.getMessage().getBytes());
         }
@@ -84,17 +84,17 @@ public abstract class BaseHttpHandler implements HttpHandler {
     /**
      * GET метод для получения данных
      */
-    public abstract String get(String[] path, String message);
+    public abstract String get(String path, String message);
 
     /**
      * POST метод для добавления/редактирования данных
      */
-    public abstract String post(String[] path, String message);
+    public abstract String post(String path, String message);
 
     /**
      * DELETE метод для удаления данных
      */
-    public abstract String delete(String[] path, String message);
+    public abstract String delete(String path, String message);
 
     /**
      * Метод для получения объекта из строки
@@ -128,5 +128,16 @@ public abstract class BaseHttpHandler implements HttpHandler {
      */
     public String toJson(Object object) {
         return gson.toJson(object);
+    }
+
+    /**
+     * Метод для получения ID задачи из запроса
+     */
+    public int getId(String path) throws NumberFormatException {
+        String[] pathParts = path.split("/");
+        if (pathParts.length < 3) {
+            return 0;
+        }
+        return Integer.parseInt(pathParts[2]);
     }
 }

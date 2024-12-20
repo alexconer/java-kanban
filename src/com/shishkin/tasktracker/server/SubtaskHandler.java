@@ -11,13 +11,16 @@ public class SubtaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String get(String[] path, String message) {
+    public String get(String path, String message) {
         try {
-            Object obj = switch (path.length) {
-                case 2 -> getTaskManager().getAllSubtasks();
-                case 3 -> getTaskManager().getSubtaskById(Integer.parseInt(path[2]));
-                default -> throw new NotFoundException("Некорректный запрос");
-            };
+            Object obj;
+            if (path.matches("^/subtasks$")) {
+                obj = getTaskManager().getAllSubtasks();
+            } else if (path.matches("^/subtasks/\\d+$")) {
+                obj = getTaskManager().getSubtaskById(getId(path));
+            } else {
+                throw new NotFoundException("Некорректный запрос");
+            }
             return toJson(obj);
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид таска");
@@ -25,7 +28,7 @@ public class SubtaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String post(String[] path, String message) {
+    public String post(String path, String message) {
         Subtask subtask = fromJson(message, Subtask.class);
 
         int epicId = subtask.getEpicId();
@@ -42,9 +45,9 @@ public class SubtaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String delete(String[] path, String message) {
+    public String delete(String path, String message) {
         try {
-            getTaskManager().deleteSubtaskById(Integer.parseInt(path[2]));
+            getTaskManager().deleteSubtaskById(getId(path));
             return null;
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид таска");

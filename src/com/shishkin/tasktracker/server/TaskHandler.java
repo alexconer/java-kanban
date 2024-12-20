@@ -11,14 +11,17 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String get(String[] path, String message) {
+    public String get(String path, String message) {
 
         try {
-            Object obj = switch (path.length) {
-                case 2 -> getTaskManager().getAllTasks();
-                case 3 -> getTaskManager().getTaskById(Integer.parseInt(path[2]));
-                default -> throw new NotFoundException("Некорректный запрос");
-            };
+            Object obj;
+            if (path.matches("^/tasks$")) {
+                obj = getTaskManager().getAllTasks();
+            } else if (path.matches("^/tasks/\\d+$")) {
+                obj = getTaskManager().getTaskById(getId(path));
+            } else {
+                throw new NotFoundException("Некорректный запрос");
+            }
             return toJson(obj);
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид задачи");
@@ -26,7 +29,7 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String post(String[] path, String message) {
+    public String post(String path, String message) {
 
         Task task = fromJson(message, Task.class);
 
@@ -39,9 +42,9 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public String delete(String[] path, String message) {
+    public String delete(String path, String message) {
         try {
-            getTaskManager().deleteTaskById(Integer.parseInt(path[2]));
+            getTaskManager().deleteTaskById(getId(path));
             return null;
         } catch (NumberFormatException e) {
             throw new NotFoundException("Некорректный ид задачи");

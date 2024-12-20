@@ -39,6 +39,11 @@ public class TaskHandlerTest extends HttpHandlersTest {
 
     @Test
     public void testAddTask() throws IOException, InterruptedException {
+
+        // ошибочный запрос
+        HttpResponse<String> response = getResponse("POST", "/tasks", "{\"foo\":\"bar\"}");
+        assertEquals(500, response.statusCode());
+
         // проверяем, что создалась задача
         List<Task> tasksFromManager = manager.getAllTasks();
 
@@ -78,8 +83,11 @@ public class TaskHandlerTest extends HttpHandlersTest {
         int id = tasksFromManager.getFirst().getId();
         Task newTask = new Task(id, "Задача 1 (update)", "Описание задачи 1", TaskStates.IN_PROGRESS);
         HttpResponse<String> response = getResponse("POST", "/tasks", gson.toJson(newTask));
-
         assertEquals(201, response.statusCode());
+
+        // ошибочный запрос
+        response = getResponse("POST", "/tasks", "{\"foo\":\"bar\"}");
+        assertEquals(500, response.statusCode());
 
         tasksFromManager = manager.getAllTasks();
 
@@ -100,6 +108,9 @@ public class TaskHandlerTest extends HttpHandlersTest {
         HttpResponse<String> response = getResponse("DELETE", "/tasks/99999", null);
         assertEquals(404, response.statusCode());
 
+        response = getResponse("DELETE", "/tasks/99999aaa", null);
+        assertEquals(404, response.statusCode());
+
         response = getResponse("DELETE", "/tasks/" + id, null);
         assertEquals(200, response.statusCode());
 
@@ -114,7 +125,10 @@ public class TaskHandlerTest extends HttpHandlersTest {
 
         assertEquals(2, tasksFromManager.size());
 
-        HttpResponse<String> response = getResponse("GET", "/tasks", null);
+        HttpResponse<String> response = getResponse("GET", "/tasks123", null);
+        assertEquals(404, response.statusCode());
+
+        response = getResponse("GET", "/tasks", null);
         assertEquals(200, response.statusCode());
 
         JsonElement element = JsonParser.parseString(response.body());
@@ -134,6 +148,9 @@ public class TaskHandlerTest extends HttpHandlersTest {
         int id = tasksFromManager.getLast().getId();
 
         response = getResponse("GET", "/tasks/9999", null);
+        assertEquals(404, response.statusCode());
+
+        response = getResponse("GET", "/tasks/9999aaa", null);
         assertEquals(404, response.statusCode());
 
         response = getResponse("GET", "/tasks/" + id, null);
